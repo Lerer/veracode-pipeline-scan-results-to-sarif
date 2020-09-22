@@ -76,7 +76,7 @@ const sevIntToStr = (sevInt => {
 })
 
 const addRuleToRules = (issue,rules) => {
-    if (rules.filter(ruleItem => ruleItem.id===issue.CWEId).length>0) {
+    if (rules.filter(ruleItem => ruleItem.id===issue.cwe_id).length>0) {
         return null;
     }
     /*
@@ -92,17 +92,17 @@ const addRuleToRules = (issue,rules) => {
             }
     */
     let rule = {
-        id: issue.CWEId,
+        id: issue.cwe_id,
         shortDescription: {
-            text: "CWE-"+issue.CWEId+": "+issue.IssueType
+            text: "CWE-"+issue.cwe_id+": "+issue.issue_type
         },
-        helpUri: "https://cwe.mitre.org/data/definitions/"+issue.CWEId+".html",
+        helpUri: "https://cwe.mitre.org/data/definitions/"+issue.cwe_id+".html",
         properties: {
-            category: issue.IssueTypeId,
-            tags: [issue.IssueTypeId]
+            category: issue.issue_type_id,
+            tags: [issue.issue_type_id]
         },
         defaultConfiguration: {
-            level: sevIntToStr(issue.Severity)
+            level: sevIntToStr(issue.severity)
         }
     }
 
@@ -161,7 +161,7 @@ const convertPipelineResultFileToSarifFile = (inputFileName,outputFileName) => {
 
     //"scan_status": "SUCCESS"
     if (results.scan_status==='SUCCESS') {
-        let issues = results.results.TestResults.Issues.Issue;
+        let issues = results.findings;
         console.log('Issues count: '+issues.length);
 
         let rules=[];
@@ -175,28 +175,28 @@ const convertPipelineResultFileToSarifFile = (inputFileName,outputFileName) => {
             }
 
             // construct flaw location
-            const issueFileLocation = issue.Files.SourceFile;
-            const filePath = getFilePath(issueFileLocation.File);
+            const issueFileLocation = issue.files.source_file;
+            const filePath = getFilePath(issueFileLocation.file);
             let location = {
                 physicalLocation: {
                     artifactLocation: {
                         uri: filePath
                     },
                     region: {
-                        startLine: parseInt(issueFileLocation.Line)
+                        startLine: parseInt(issueFileLocation.line)
                     }
                 }
             }
             // get the severity number to name
-            let serStr = sevIntToStr(issue.Severity);
+            let serStr = sevIntToStr(issue.severity);
             // construct the issue
             let resultItem = {
                 level: serStr,
                 message: {
-                    text: issue.DisplayText,
+                    text: issue.display_text,
                 },
                 locations: [location],
-                ruleId: issue.CWEId
+                ruleId: issue.cwe_id
             }
             return resultItem;
         })
