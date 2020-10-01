@@ -51,7 +51,7 @@ Example values:
 ```
 - name: Convert pipeline scan output to SARIF format
   id: convert   
-  uses: Lerer/veracode-pipeline-scan-results-to-sarif@v1.0.5
+  uses: Lerer/veracode-pipeline-scan-results-to-sarif@v1.0.6
   with:
     pipeline-results-json: results.json
     output-results-sarif: veracode-results.sarif
